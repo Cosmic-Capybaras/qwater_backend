@@ -29,13 +29,22 @@ class StatusListCreate(generics.ListCreateAPIView):
 class LatestDataForLocation(APIView):
     def get(self, request, location_id, *args, **kwargs):
         try:
+            location = Location.objects.get(id=location_id)
+        except Location.DoesNotExist:
+            return Response({"error": "No such location found"}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
             latest_data = Data.objects.filter(location_id=location_id).latest('created_at')
             serializer = DataSerializer(latest_data)
             return Response(serializer.data)
-        except Location.DoesNotExist:
-            return Response({"error": "No such location found"}, status=status.HTTP_404_NOT_FOUND)
         except Data.DoesNotExist:
-            return Response({"error": "No data found for the given location"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({
+                "location": location.id,
+                "location_title": location.title,
+                "location_city": location.city,
+                "location_country": location.country,
+                "data_values": []
+            })
 
 
 
