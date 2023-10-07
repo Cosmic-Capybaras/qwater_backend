@@ -29,7 +29,6 @@ class StatusListCreate(generics.ListCreateAPIView):
 class LatestDataForLocation(APIView):
     def get(self, request, location_id, *args, **kwargs):
         try:
-            location = Location.objects.get(id=location_id)
             latest_data = Data.objects.filter(location_id=location_id).latest('created_at')
             serializer = DataSerializer(latest_data)
             return Response(serializer.data)
