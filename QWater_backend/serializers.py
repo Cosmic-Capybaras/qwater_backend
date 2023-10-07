@@ -30,10 +30,11 @@ class DataValueSerializer(serializers.ModelSerializer):
 
 class DataSerializer(serializers.ModelSerializer):
     data_values = DataValueSerializer(many=True, read_only=True, source='datavalue_set')
+    location_title = serializers.StringRelatedField(source='location.title', read_only=True)
 
     class Meta:
         model = Data
-        fields = '__all__'
+        fields = ('location', 'location_title', 'status', 'description', 'test_date', 'data_values')
 
 
 class DataCreateSerializer(serializers.ModelSerializer):
